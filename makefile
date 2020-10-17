@@ -1,17 +1,17 @@
 WINBUILD = x86_64-w64-mingw32-g++-win32
 c= g++
-WINLIBS = -lglfw3
-LIBS = -lglfw
-PATHS = -I/usr/include/GLFW/
+WINLIBS = -lSDL2
+LIBS = -lSDL2
+PATHS = -I/usr/include/SDL2
 
 interpreter: chip8.o run.o opcodes.o
-	$(c) chip8.o run.o opcodes.o -o chip8 $(LIBS)
+	$(c) chip8.o run.o opcodes.o -o chip8 $(LIBS) -ggdb
 
 chip8.o: chip8.cpp
-	$(c) -c chip8.cpp -Wall 
+	$(c) -c chip8.cpp -Wall -ggdb
 
 run.o: run.cpp
-	$(c) -c run.cpp $(PATHS)
+	$(c) -c run.cpp $(PATHS) -ggdb
 
 opcodes.o: opcodes.cpp
 	$(c) -c opcodes.cpp -Wall
