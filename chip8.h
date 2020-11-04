@@ -12,7 +12,7 @@ unsigned short index_register;
 unsigned short program_counter;
 unsigned short stack[16];
 unsigned short stack_pointer;
-unsigned char key[16];
+//unsigned char key[16];
 public:
 void init();
 void cycle();
@@ -23,7 +23,7 @@ char test[20]{ "This test worked!" };
 unsigned int graphics[64 * 32];
 unsigned char delay_timer;
 unsigned char sound_timer;
-
+unsigned char key[16];
 
 };
 

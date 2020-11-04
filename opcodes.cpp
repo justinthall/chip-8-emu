@@ -5,7 +5,6 @@
 
 void chip8::process_op(){
 opcode = memory[program_counter] << 8 | memory[program_counter + 1];
-std::cout<<std::hex<<opcode<<std::endl;
 switch(opcode&0xF000)
 {  
 	case 0x0000:
@@ -58,7 +57,7 @@ switch(opcode&0xF000)
 		program_counter += 2;
 		break;
 	case 0x7000:  //adds 0x00FF to register x
-		v_registers[(opcode&0x0F00)>>8] = (opcode&0x00FF);
+		v_registers[(opcode&0x0F00)>>8] += (opcode&0x00FF);
 		program_counter += 2;
 		break;
 	case 0x8000:  
@@ -99,22 +98,22 @@ switch(opcode&0xF000)
 				break;
 			case 0x0006:  	
 				v_registers[0xF] = v_registers[(opcode&0x0F00)>>8] & 0x1;
-				v_registers[(opcode&0x0F00)>>8]>>= 1;
+				v_registers[(opcode&0x0F00)>>8]/= 2;
 				program_counter += 2;
 				break;
 			case 0x0007:
-				if(v_registers[(opcode&0x0F00)>>8] > v_registers[(opcode&0x00F0)>>4]){
+				if(v_registers[(opcode&0x0F00)>>8] < v_registers[(opcode&0x00F0)>>4]){
 				v_registers[0xF] = 0;
 				}
 				else{
 					v_registers[0xF] = 1;
 				}
-				v_registers[(opcode & 0x00F0) >> 4] -= v_registers[(opcode & 0x0F00) >> 8];
+				v_registers[(opcode & 0x0F00) >> 8] = (v_registers[(opcode & 0x00F0)>>4]-v_registers[(opcode & 0x0F00) >> 8]);
 				program_counter += 2;
 				break;
 			case 0x000E:
 			v_registers[0xF] = (v_registers[(opcode&0x0F00)>>8]>>7);
-			v_registers[(opcode&0x0F00)>>8] <<= 1;
+			v_registers[(opcode&0x0F00)>>8] *= 2;
 			program_counter += 2;
 			break;
 		}
@@ -150,7 +149,7 @@ switch(opcode&0xF000)
 					if(graphics[(x+xaxis+((y+yaxis)*64))]== 1){
 						v_registers[15] = 1;
 					}
-					graphics[x + xaxis + ((y + yaxis) * 64)] ^= 1;
+					graphics[(x + xaxis + ((y + yaxis) * 64)) % (64 * 32)] ^= 1;
 				}
 			}
 

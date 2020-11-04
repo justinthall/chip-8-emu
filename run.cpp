@@ -3,8 +3,9 @@
 #include <SDL.h>
 #include <iostream>
 #include <memory>
-#define WINDOW_WIDTH 640
-#define HEIGHT 480
+#define WINDOW_WIDTH 64
+#define HEIGHT 32
+#define MODIFER 10
 
 chip8 test;
 void update_screen(SDL_Renderer** renderer, SDL_Texture** texture);
@@ -25,8 +26,16 @@ int main(int argc, char*argv[]){
 	// declare double pointers for update screen
   SDL_Renderer **ptr_render;
 	SDL_Texture **ptr_texture;   
-  SDL_Init(SDL_INIT_VIDEO);
-  SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_WIDTH, 0, &window, &renderer);
+  if(SDL_Init(SDL_INIT_VIDEO)!=0)
+  {
+      std::cout << "Error : " << SDL_GetError() << std::endl;
+    return -1;
+  }
+  if(SDL_CreateWindowAndRenderer(HEIGHT * MODIFER, WINDOW_WIDTH* MODIFER, 0, &window, &renderer)!= 0)
+  {
+    std::cout<<"Error: "<<SDL_GetError()<<std::endl;
+    return -1;
+  }
 	ptr_render = &renderer;
 	SDL_Texture* texture{SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
     	SDL_TEXTUREACCESS_STREAMING, 
@@ -50,24 +59,23 @@ int main(int argc, char*argv[]){
 
 void update_screen(SDL_Renderer** renderer, SDL_Texture** texture)
 {
- 	int pixel[2048];
+int pixel[2048];
 	int pitch;
-	pixel[10] = 1;
-  SDL_LockTexture(*texture, NULL, (void**)pixel, &pitch);
+if(SDL_LockTexture(*texture, nullptr, reinterpret_cast<void**>(&pixel), &pitch)!=0)
+    std::cout << "Error : " << SDL_GetError() << std::endl;
   for (int i = 0; i < 2048; i++)
 	{
 		if (test.graphics[i]== 0){
-			pixel[i] = 0000;
+			pixel[i] =  0;
 		}
 		else
 		{ 
-			pixel[i] = 1;
+			pixel[i] = 255;
 		}
 	}
-
     SDL_UnlockTexture(*texture);
     SDL_RenderClear(*renderer);
-    SDL_RenderCopy(*renderer, *texture, NULL,NULL);
+    SDL_RenderCopy(*renderer, *texture, nullptr,nullptr);
     SDL_RenderPresent(*renderer);
     test.draw = false;
 }
